@@ -29,11 +29,11 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
@@ -66,7 +66,7 @@ var _default = /*#__PURE__*/function (_Controller) {
         return _this.onInputChange(event);
       });
 
-      this._dispatchEvent('dropzone:connect');
+      this._dispatchEvent('dropzonemultiple:connect');
     }
   }, {
     key: "clear",
@@ -78,32 +78,35 @@ var _default = /*#__PURE__*/function (_Controller) {
       this.previewImageTarget.style.display = 'none';
       this.previewImageTarget.style.backgroundImage = 'none';
       this.previewFilenameTarget.textContent = '';
+      document.querySelectorAll('.dropzone-preview-image-container').forEach(function (e) {
+        return e.remove();
+      });
 
-      this._dispatchEvent('dropzone:clear');
+      this._dispatchEvent('dropzonemultiple:clear');
     }
   }, {
     key: "onInputChange",
     value: function onInputChange(event) {
-      var file = event.target.files[0];
+      for (var fileItem in event.target.files) {
+        var file = event.target.files[fileItem];
 
-      if (typeof file === 'undefined') {
-        return;
-      } // Hide the input and placeholder
+        if (typeof file === 'undefined') {
+          return;
+        } // Hide the input and placeholder
 
 
-      this.inputTarget.style.display = 'none';
-      this.placeholderTarget.style.display = 'none'; // Show the filename in preview
+        this.inputTarget.style.display = 'none';
+        this.placeholderTarget.style.display = 'none';
+        this.previewTarget.style.display = 'flex'; // If the file is an image, load it and display it as preview
 
-      this.previewFilenameTarget.textContent = file.name;
-      this.previewTarget.style.display = 'flex'; // If the file is an image, load it and display it as preview
+        this.previewImageTarget.style.display = 'none';
 
-      this.previewImageTarget.style.display = 'none';
+        if (file.type && file.type.indexOf('image') !== -1) {
+          this._populateImagePreview(file);
+        }
 
-      if (file.type && file.type.indexOf('image') !== -1) {
-        this._populateImagePreview(file);
+        this._dispatchEvent('dropzonemultiple:change', file);
       }
-
-      this._dispatchEvent('dropzone:change', file);
     }
   }, {
     key: "_populateImagePreview",
@@ -117,8 +120,17 @@ var _default = /*#__PURE__*/function (_Controller) {
 
       var reader = new FileReader();
       reader.addEventListener('load', function (event) {
-        _this2.previewImageTarget.style.display = 'block';
-        _this2.previewImageTarget.style.backgroundImage = 'url("' + event.target.result + '")';
+        var parentDiv = document.createElement("div");
+        parentDiv.classList.add('dropzone-preview-image-container');
+        var divPreview = document.createElement("div");
+        divPreview.classList.add('dropzone-preview-image');
+        divPreview.style.backgroundImage = 'url("' + event.target.result + '")';
+        var divFileName = document.createElement("div");
+        divFileName.textContent = file.name;
+        parentDiv.appendChild(divPreview);
+        parentDiv.appendChild(divFileName);
+
+        _this2.previewImageTarget.parentNode.appendChild(parentDiv);
       });
       reader.readAsDataURL(file);
     }

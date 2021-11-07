@@ -1,9 +1,9 @@
-{% block dropzone_widget -%}
-    {%- set dataController = (attr['data-controller']|default('') ~ ' symfony--ux-dropzone--dropzone')|trim -%}
-    {%- set attr = attr|merge({ 'data-controller': '', class: (attr.class|default('') ~ ' dropzone-input')|trim}) -%}
+{% block dropzonemultiple_widget -%}
+    {%- set dataController = (attr['data-controller']|default('') ~ ' symfony--ux-dropzonemultiple--dropzone')|trim -%}
+    {%- set attr = attr|merge({ 'data-controller': '', class: (attr.class|default('') ~ ' dropzonemultiple-input')|trim}) -%}
 
     <div class="dropzone-container" data-controller="{{ dataController }}">
-        <input type="file" {{ block('widget_attributes') }} data-symfony--ux-dropzone--dropzone-target="input" />
+        <input type="file" {{ block('widget_attributes') }} data-symfony--ux-dropzonemultiple--dropzone-target="input" multiple/>
 
         <div class="dropzone-placeholder" data-symfony--ux-dropzone--dropzone-target="placeholder">
             {%- if attr.placeholder is defined and attr.placeholder is not none -%}
@@ -11,14 +11,14 @@
             {%- endif -%}
         </div>
 
-        <div class="dropzone-preview" data-symfony--ux-dropzone--dropzone-target="preview" style="display: none">
+        <div class="dropzone-preview" data-symfony--ux-dropzonemultiple--dropzone-target="preview" style="display: none">
             <button class="dropzone-preview-button" type="button"
-                    data-symfony--ux-dropzone--dropzone-target="previewClearButton"></button>
+                    data-symfony--ux-dropzonemultiple--dropzone-target="previewClearButton"></button>
 
             <div class="dropzone-preview-image" style="display: none"
-                 data-symfony--ux-dropzone--dropzone-target="previewImage"></div>
+                 data-symfony--ux-dropzonemultiple--dropzone-target="previewImage"></div>
 
-            <div data-symfony--ux-dropzone--dropzone-target="previewFilename" class="dropzone-preview-filename"></div>
+            <div data-symfony--ux-dropzonemultiple--dropzone-target="previewFilename" class="dropzone-preview-filename"></div>
         </div>
     </div>
 {%- endblock %}

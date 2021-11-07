@@ -24,7 +24,7 @@ export default class extends Controller {
         // Listen on input change and display preview
         this.inputTarget.addEventListener('change', (event) => this.onInputChange(event));
 
-        this._dispatchEvent('dropzone:connect');
+        this._dispatchEvent('dropzonemultiple:connect');
     }
 
     clear() {
@@ -35,31 +35,32 @@ export default class extends Controller {
         this.previewImageTarget.style.display = 'none';
         this.previewImageTarget.style.backgroundImage = 'none';
         this.previewFilenameTarget.textContent = '';
+        document.querySelectorAll('.dropzone-preview-image-container').forEach(e => e.remove());
 
-        this._dispatchEvent('dropzone:clear');
+        this._dispatchEvent('dropzonemultiple:clear');
     }
 
     onInputChange(event) {
-        const file = event.target.files[0];
-        if (typeof file === 'undefined') {
-            return;
+        for (var fileItem in event.target.files) {
+            var file = event.target.files[fileItem];
+            if (typeof file === 'undefined') {
+                return;
+            }
+
+            // Hide the input and placeholder
+            this.inputTarget.style.display = 'none';
+            this.placeholderTarget.style.display = 'none';
+
+            this.previewTarget.style.display = 'flex';
+
+            // If the file is an image, load it and display it as preview
+            this.previewImageTarget.style.display = 'none';
+            if (file.type && file.type.indexOf('image') !== -1) {
+                this._populateImagePreview(file);
+            }
+
+            this._dispatchEvent('dropzonemultiple:change', file);
         }
-
-        // Hide the input and placeholder
-        this.inputTarget.style.display = 'none';
-        this.placeholderTarget.style.display = 'none';
-
-        // Show the filename in preview
-        this.previewFilenameTarget.textContent = file.name;
-        this.previewTarget.style.display = 'flex';
-
-        // If the file is an image, load it and display it as preview
-        this.previewImageTarget.style.display = 'none';
-        if (file.type && file.type.indexOf('image') !== -1) {
-            this._populateImagePreview(file);
-        }
-
-        this._dispatchEvent('dropzone:change', file);
     }
 
     _populateImagePreview(file) {
@@ -71,8 +72,21 @@ export default class extends Controller {
         const reader = new FileReader();
 
         reader.addEventListener('load', (event) => {
-            this.previewImageTarget.style.display = 'block';
-            this.previewImageTarget.style.backgroundImage = 'url("' + event.target.result + '")';
+            var parentDiv = document.createElement("div");
+            parentDiv.classList.add('dropzone-preview-image-container')
+
+            var divPreview = document.createElement("div");
+            divPreview.classList.add('dropzone-preview-image')
+            divPreview.style.backgroundImage = 'url("' + event.target.result + '")'
+
+            var divFileName = document.createElement("div");
+            divFileName.textContent = file.name
+
+
+            parentDiv.appendChild(divPreview);
+            parentDiv.appendChild(divFileName);
+
+            this.previewImageTarget.parentNode.appendChild(parentDiv);
         });
 
         reader.readAsDataURL(file);

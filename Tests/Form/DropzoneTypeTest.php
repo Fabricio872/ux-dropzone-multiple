@@ -13,7 +13,7 @@ namespace Symfony\UX\Dropzone\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\UX\Dropzone\Form\DropzoneType;
+use Symfony\UX\Dropzone\Form\DropzoneMultipleType;
 use Symfony\UX\Dropzone\Tests\Kernel\TwigAppKernel;
 use Twig\Environment;
 
@@ -31,7 +31,7 @@ class DropzoneTypeTest extends TestCase
         $container = $kernel->getContainer()->get('test.service_container');
 
         $form = $container->get(FormFactoryInterface::class)->createBuilder()
-            ->add('photo', DropzoneType::class, ['attr' => ['data-controller' => 'mydropzone']])
+            ->add('photo', DropzoneMultipleType::class, ['attr' => ['data-controller' => 'mydropzone']])
             ->getForm()
         ;
 

@@ -30,7 +30,7 @@ the native FileType class:
 
 ```php
 // ...
-use Symfony\UX\Dropzone\Form\DropzoneType;
+use yassinehamouten\UX\DropzoneMultiple\Form\DropzoneMultipleType;
 
 class CommentFormType extends AbstractType
 {
@@ -38,7 +38,7 @@ class CommentFormType extends AbstractType
     {
         $builder
             // ...
-            ->add('photo', DropzoneType::class)
+            ->add('photo', DropzoneMultipleType::class)
             // ...
         ;
     }
@@ -53,17 +53,17 @@ Symfony UX Dropzone provides a default stylesheet in order to ease usage. You ca
 disable it to add your own design if you wish.
 
 In `assets/controllers.json`, disable the default stylesheet by switching
-the `@symfony/ux-dropzone/src/style.css` autoimport to `false`:
+the `@yassinehamouten/ux-dropzone-multiple/src/style.css` autoimport to `false`:
 
 ```json
 {
     "controllers": {
-        "@symfony/ux-dropzone": {
-            "dropzone": {
+        "@yassinehamouten/ux-dropzone-multiple": {
+            "dropzone-multiple": {
                 "enabled": true,
                 "webpackMode": "eager",
                 "autoimport": {
-                    "@symfony/ux-dropzone/src/style.css": false
+                    "@yassinehamouten/ux-dropzone-multiple/src/style.css": false
                 }
             }
         }
@@ -89,16 +89,16 @@ import { Controller } from 'stimulus';
 
 export default class extends Controller {
     connect() {
-        this.element.addEventListener('dropzone:connect', this._onConnect);
-        this.element.addEventListener('dropzone:change', this._onChange);
-        this.element.addEventListener('dropzone:clear', this._onClear);
+        this.element.addEventListener('dropzone-multiple:connect', this._onConnect);
+        this.element.addEventListener('dropzone-multiple:change', this._onChange);
+        this.element.addEventListener('dropzone-multiple:clear', this._onClear);
     }
 
     disconnect() {
         // You should always remove listeners when the controller is disconnected to avoid side-effects
-        this.element.removeEventListener('dropzone:connect', this._onConnect);
-        this.element.removeEventListener('dropzone:change', this._onChange);
-        this.element.removeEventListener('dropzone:clear', this._onClear);
+        this.element.removeEventListener('dropzone-multiple:connect', this._onConnect);
+        this.element.removeEventListener('dropzone-multiple:change', this._onChange);
+        this.element.removeEventListener('dropzone-multiple:clear', this._onClear);
     }
 
     _onConnect(event) {
@@ -119,7 +119,7 @@ Then in your form, add your controller as an HTML attribute:
 
 ```php
 // ...
-use Symfony\UX\Dropzone\Form\DropzoneType;
+use yassinehamouten\UX\DropzoneMultiple\Form\DropzoneMultipleType;
 
 class CommentFormType extends AbstractType
 {
@@ -127,7 +127,7 @@ class CommentFormType extends AbstractType
     {
         $builder
             // ...
-            ->add('photo', DropzoneType::class, [
+            ->add('photo', DropzoneMultipleType::class, [
                 'attr' => ['data-controller' => 'mydropzone'],
             ])
             // ...
